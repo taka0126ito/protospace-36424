@@ -4,10 +4,11 @@ class CommentsController < ApplicationController
   def create
     @comment = Comment.new(comment_params)
     if @comment.save
-    redirect_to prototypes_path
-
+    redirect_to prototype_path(@comment.prototype)
     else
-      render.new
+      @prototype = @comment.prototype
+      @comments = @prototype.comments
+      render :"prototypes/show"
     end
   end
 
@@ -28,6 +29,11 @@ class CommentsController < ApplicationController
   def comment_params
     params.require(:comment).permit(:text).merge(user_id: current_user.id, prototype_id: params[:prototype_id])
   end
+
+  def move_to_index
+    redirect_to new_user_session_path unless user_signed_in?
+  end
+
 end
 
 
